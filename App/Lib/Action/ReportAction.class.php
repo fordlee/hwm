@@ -49,28 +49,25 @@ class ReportAction extends Action {
             $data['operator'] = $_SESSION['name'];
             $data['operator_time'] = date('Y-m-d H:i:s');
             $m_r = M('report');
-            //var_dump($data);die();
             $report_id = $m_r -> add($data);
 
-            $m_r_v = M('report_value');
             $m_r_c = M('report_column');
             $rcfields = $m_r_c -> where('dept_id='.$proid) -> select();
-            //var_dump($rcfields);
             foreach ($rcfields as $k => $v) {
                 $rcid = $v['id'];
                 $cname = $v['cname'];
                 $cvalue = $_POST[$cname];
-                
+
                 $item['report_id'] = $report_id;
                 $item['reportc_id'] = $rcid;
                 $item['date'] = $reportdate;
                 $item['cname'] = $cname;
                 $item['cvalue'] = $cvalue;
                 
-                var_dump($item);
+                //var_dump($item);
+                $m_r_v = M('report_value');
                 $ret = $m_r_v -> add($item);
             }
-            die();
             if($ret !== false){
                 $this -> success('数据录入成功！');
             }else{
@@ -83,7 +80,7 @@ class ReportAction extends Action {
     		$this -> assign('deptInfo',$deptInfo);
     		$m_r_c = M('report_column');
     		$rField = $m_r_c -> where('dept_id='.$proid) -> select();
-            //var_dump($rField);die();
+
             $this -> assign('proid',$proid);
     		$this -> assign('rField',$rField);
     		$this -> display();

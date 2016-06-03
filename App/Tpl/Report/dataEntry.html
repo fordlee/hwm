@@ -87,7 +87,7 @@
                   <empty name="vo.formula">
                     <label for="{$vo.cname}" class="col-lg-2 control-label">{$vo.ctitle}[{$vo.cname}]：</label>
                     <div class="col-lg-2">
-                      <input type="text" name="{$vo.cname}" id="{$vo.cname}" class="form-control">
+                      <input type="text" name="{$vo.cname}" id="{$vo.cname}" onchange="storage('{$vo.cname}')" class="form-control">
                     </div>
                   <else />
                     <label for="{$vo.name}" class="col-lg-2 control-label">{$vo.ctitle}[{$vo.formula}]：</label>
@@ -95,7 +95,7 @@
                       <input type="text" name="{$vo.cname}" id="{$vo.cname}" readonly class="form-control">
                     </div>
                     <div class="col-lg-2">
-                      <button onclick="calc({$vo.formula})" class="btn btn-default">计算</button>
+                      <a href="javascript:void(0);" onclick="calculate('{$vo.cname}','{$vo.formula}');return false;" class="btn btn-default">计算</a>
                     </div>
                   </empty>
               </div>
@@ -133,8 +133,26 @@ $('#outcome').bind("change",function(){
     $('#profitrate').val(((income - outcome)/outcome).toFixed(2));
 });*/
 
-function calc(formula){
+function storage(cname){
+  var cvalue = $('#'+cname).val();
+  sessionStorage.setItem(cname,cvalue);
+}
 
+function calculate(cname,formula){
+  var strArr = new Array();
+  strArr=formula.split(" ");
+  var express = "";
+  for (i=0;i<strArr.length;i++ ){
+    var key = strArr[i];
+    var value = sessionStorage.getItem(key);
+    if(value !== null){
+      express += value;
+    }else{
+      express += key;
+    }
+  }
+  var result = eval(express);
+  $('#'+cname).val(result);
 }
 
 </script>
