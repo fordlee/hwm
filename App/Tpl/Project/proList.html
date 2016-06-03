@@ -47,7 +47,8 @@
                         <th>项目</th>
                         <th>负责人</th>
                         <th>简介</th>
-                        <th>操作</th>
+                        <th>项目操作</th>
+                        <th>报表操作</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -59,8 +60,11 @@
                             <td>{$v.description}</td>
                             <td>
                               <a href="__URL__/proEdit/id/{$v.id}" class="btn btn-default">修改</a>&nbsp;&nbsp;
-                              <a href="__URL__/proDel/id/{$v.id}" class="btn btn-danger">删除</a>&nbsp;&nbsp;
-                              <a href="__URL__/proColSet/id/{$v.id}" class="btn btn-success">报表设置</a>
+                              <a href="__URL__/proDel/id/{$v.id}" class="btn btn-danger">删除</a>
+                            </td>
+                            <td>
+                              <a href="__URL__/proFieldSet/id/{$v.id}" class="btn btn-success">设置</a>&nbsp;&nbsp;
+                              <a href="__URL__/proFieldEdit/id/{$v.id}" class="btn btn-default">修改</a>
                             </td>
                           </tr>
                         </volist>

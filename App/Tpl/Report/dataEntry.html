@@ -28,7 +28,8 @@
         <form action="__URL__/dataEntry" method="post" class="form-horizontal">
           <div class="box-body">
             <div class="form-group">
-              <label for="dept" class="col-lg-1 control-label">部门：</label>
+              <input type="hidden" name="proid" value="{$proid}" >
+              <label for="dept" class="col-lg-2 control-label">部门：</label>
               <div class="col-lg-2">
                 <select name="dept" class="form-control">
                   <volist name="deptInfo" id="vo">
@@ -38,12 +39,14 @@
                   </volist>
                 </select>
               </div>
-              <label for="pro" class="col-lg-1 control-label">项目：</label>
+              <label for="pro" class="col-lg-2 control-label">项目：</label>
               <div class="col-lg-2">
                 <select name="pro" class="form-control">
                   <volist name="deptInfo" id="vo">
                     <if condition="$vo.pid neq 0">
-                      <option value="{$vo.id}">{$vo.dept_name}</option>
+                      <option value="{$vo.id}" <?php if($vo['id'] == $proid) echo "selected"?>>
+                        {$vo.dept_name}
+                      </option>
                     </if>
                   </volist>
                 </select>
@@ -51,42 +54,61 @@
             </div>
 
             <div class="form-group">
-              <label for="date" class="col-lg-1 control-label">日期：</label>
+              <label for="date" class="col-lg-2 control-label">日期：</label>
               <div class="col-lg-2">
                 <input type="date" name="reportdate" class="form-control">
               </div>
             </div>
 
-            <div class="form-group">
-              <label for="income" class="col-lg-1 control-label">收入(A)：</label>
+            <!-- <div class="form-group">
+              <label for="income" class="col-lg-2 control-label">收入[income]：</label>
               <div class="col-lg-2">
                 <input type="input" name="income" id="income" class="form-control">
               </div>
-              <label for="outcome" class="col-lg-1 control-label">支出(B)：</label>
+              <label for="outcome" class="col-lg-2 control-label">支出[outcome]：</label>
               <div class="col-lg-2">
                 <input type="input" name="outcome" id="outcome" class="form-control">
               </div>
             </div>
 
             <div class="form-group">
-              <div id="profitdiv">
-                <label for="profit" class="col-lg-1 control-label">利润(A-B)：</label>
+                <label for="profit" class="col-lg-2 control-label">利润[income-outcome]：</label>
                 <div class="col-lg-2">
                   <input type="text" name="profit" id="profit" value="" readonly class="form-control">
                 </div>
-              </div>
-              <div id="profitratediv">
-                <label for="profitrate" class="col-lg-1 control-label">利润率(A-B)/B：</label>
+                <label for="profitrate" class="col-lg-2 control-label">利润率[(income-outcome)/outcome]：</label>
                 <div class="col-lg-2">
                   <input type="text" name="profitrate" id="profitrate" readonly class="form-control">
                 </div>
+            </div> -->
+
+            <volist name="rField" id="vo">
+              <div class="form-group">
+                  <empty name="vo.formula">
+                    <label for="{$vo.cname}" class="col-lg-2 control-label">{$vo.ctitle}[{$vo.cname}]：</label>
+                    <div class="col-lg-2">
+                      <input type="text" name="{$vo.cname}" id="{$vo.cname}" class="form-control">
+                    </div>
+                  <else />
+                    <label for="{$vo.name}" class="col-lg-2 control-label">{$vo.ctitle}[{$vo.formula}]：</label>
+                    <div class="col-lg-2">
+                      <input type="text" name="{$vo.cname}" id="{$vo.cname}" readonly class="form-control">
+                    </div>
+                    <div class="col-lg-2">
+                      <button onclick="calc({$vo.formula})" class="btn btn-default">计算</button>
+                    </div>
+                  </empty>
               </div>
-            </div>
+            </volist>
             
           </div><!-- /.box-body -->
           <div class="box-footer">
-            <button onclick="history.go(-1)" class="btn btn-default">返回</button>
-            <button type="submit" class="btn btn-success pull-right">保存</button>
+            <div class="col-lg-2">
+              <button onclick="history.go(-1)" class="btn btn-default pull-right">返回</button>
+            </div>
+            <div class="col-lg-6">
+              <button type="submit" class="btn btn-success pull-right">保存</button>
+            </div>
           </div><!-- /.box-footer -->
         </form>
       </div><!-- /. box box-info-->
@@ -98,7 +120,7 @@
 
 <include file="Public:footer" />
 <script type="text/javascript">
-$('#income').bind("change",function(){  
+/*$('#income').bind("change",function(){  
     var income = $('#income').val();
     var outcome = $('#outcome').val();
     $('#profit').val((income - outcome).toFixed(2));
@@ -109,5 +131,10 @@ $('#outcome').bind("change",function(){
     var outcome = $('#outcome').val();
     $('#profit').val((income - outcome).toFixed(2));
     $('#profitrate').val(((income - outcome)/outcome).toFixed(2));
-});
+});*/
+
+function calc(formula){
+
+}
+
 </script>

@@ -98,21 +98,36 @@ class ProjectAction extends Action {
     	}
     }
 
-    public function proColSet(){
-        $m_r_e = M('report_ext');
-        if(isset($_POST['proColumn'])){
+    public function proDel(){
+        if(isset($_GET['id']) && !empty($_GET['id'])){
+            $id = $_GET['id'];
+            $m_d = M('department');
+            $m_d -> where('id='.$id) -> delete();
+            $this -> success('删除成功！');
+        }else{
+            $this -> error('操作失败！');
+        }
+    }
+
+    public function proFieldSet(){
+        $m_r_c = M('report_column');
+        if(isset($_POST['proColumn']) 
+            && isset($_POST['proTitle'])
+            && isset($_POST['type'])){
             $proid = $_POST['proid'];
             $proColumn = $_POST['proColumn'];
+            $proTitle = $_POST['proTitle'];
             $type = $_POST['type'];
             $formula = $_POST['formula'];
             $data = array(
                 "dept_id" => $proid,
-                "column_name" => $proColumn,
-                "column_type" => $type,
+                "cname" => $proColumn,
+                "ctitle" => $proTitle,
+                "type" => $type,
                 "formula" => $formula
             );
             
-            $ret = $m_r_e -> add($data);
+            $ret = $m_r_c -> add($data);
             if($ret !== false){
                 $this -> success('添加成功！');
             }else{
@@ -120,21 +135,14 @@ class ProjectAction extends Action {
             }
         }else{
             $proid = $_GET['id'];
-            $ret = $m_r_e -> field('column_name,formula') -> where("dept_id=".$proid) -> select();
+            $ret = $m_r_c -> field('cname,ctitle,formula') -> where("dept_id=".$proid) -> select();
             $this -> assign('ret',$ret);
             $this -> assign('proid',$proid);
             $this -> display();
         }
     }
 
-    public function proDel(){
-    	if(isset($_GET['id']) && !empty($_GET['id'])){
-            $id = $_GET['id'];
-    		$m_d = M('department');
-    		$m_d -> where('id='.$id) -> delete();
-    		$this -> success('删除成功！');
-    	}else{
-    		$this -> error('操作失败！');
-    	}
+    public function proFieldEdit(){
+        
     }
 }

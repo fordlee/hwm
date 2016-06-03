@@ -12,18 +12,37 @@ class ReportAction extends Action {
         }
     }
 
+    public function dataEntryList(){
+        $m_d = M('department');
+        $dept = $m_d -> select();
+        $tree = getTreeHtml($dept, 0);
+        $this -> assign('tree',$tree);
+        
+        $username = $_SESSION['username'];
+        $m_u = M('user');
+        $useritem = $m_u -> join('department on user.dept_id = department.id') 
+                         -> where(array("email" => $username)) 
+                         -> find();
+        $deptInfo = array();
+        if($useritem !== null){
+            $dept_id = $useritem['dept_id'];
+            $ret1 = $m_d -> where(array("pid" => $dept_id)) -> select();
+            $deptInfo = $useritem;
+            $deptInfo['dept_child'] = $ret1;
+        }
+        $this -> assign('level',$useritem['level']);
+        $this -> assign('deptInfo',$deptInfo);
+        $this -> display();
+    }
+
     public function dataEntry(){
-    	if((isset($_POST['dept']) && !empty($_POST['dept']))
-    		&&(isset($_POST['pro']) && !empty($_POST['pro']))
-            &&(isset($_POST['reportdate']) && !empty($_POST['reportdate']))
-    		&&(isset($_POST['income']) && !empty($_POST['income']))
-    		&&(isset($_POST['outcome']) && !empty($_POST['outcome']))){
-    		$pro = $_POST['pro'];
+    	if(isset($_POST['reportdate']) && !empty($_POST['reportdate'])){
+    		$proid = $_POST['proid'];
             $reportdate = $_POST['reportdate'];
     		$income = $_POST['income'];
     		$outcome = $_POST['outcome'];
             
-            $data['dept_id'] = $pro;
+            $data['dept_id'] = $proid;
             $data['date'] = $reportdate;
             $data['income'] = $income;
             $data['outcome'] = $outcome;
@@ -31,21 +50,42 @@ class ReportAction extends Action {
             $data['operator_time'] = date('Y-m-d H:i:s');
             $m_r = M('report');
             //var_dump($data);die();
-            $ret = $m_r -> add($data);
+            $report_id = $m_r -> add($data);
+
+            $m_r_v = M('report_value');
+            $m_r_c = M('report_column');
+            $rcfields = $m_r_c -> where('dept_id='.$proid) -> select();
+            //var_dump($rcfields);
+            foreach ($rcfields as $k => $v) {
+                $rcid = $v['id'];
+                $cname = $v['cname'];
+                $cvalue = $_POST[$cname];
+                
+                $item['report_id'] = $report_id;
+                $item['reportc_id'] = $rcid;
+                $item['date'] = $reportdate;
+                $item['cname'] = $cname;
+                $item['cvalue'] = $cvalue;
+                
+                var_dump($item);
+                $ret = $m_r_v -> add($item);
+            }
+            die();
             if($ret !== false){
                 $this -> success('数据录入成功！');
             }else{
                 $this -> success('数据录入失败！');
             }
     	}else{
-            $m_u = M('user');
-
+            $proid = $_GET['id'];
     		$m_d = M('department');
     		$deptInfo = $m_d -> select();
     		$this -> assign('deptInfo',$deptInfo);
-    		$m_r_e = M('report_ext');
-    		$rc = $m_r_e -> where('dept_id='.$proid) -> select();//var_dump($rc);die();
-    		$this -> assign('rc',$rc);
+    		$m_r_c = M('report_column');
+    		$rField = $m_r_c -> where('dept_id='.$proid) -> select();
+            //var_dump($rField);die();
+            $this -> assign('proid',$proid);
+    		$this -> assign('rField',$rField);
     		$this -> display();
     	}
     }
