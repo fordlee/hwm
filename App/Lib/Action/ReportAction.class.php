@@ -39,13 +39,9 @@ class ReportAction extends Action {
     	if(isset($_POST['reportdate']) && !empty($_POST['reportdate'])){
     		$proid = $_POST['proid'];
             $reportdate = $_POST['reportdate'];
-    		$income = $_POST['income'];
-    		$outcome = $_POST['outcome'];
             
             $data['dept_id'] = $proid;
             $data['date'] = $reportdate;
-            $data['income'] = $income;
-            $data['outcome'] = $outcome;
             $data['operator'] = $_SESSION['name'];
             $data['operator_time'] = date('Y-m-d H:i:s');
             $m_r = M('report');
@@ -64,7 +60,6 @@ class ReportAction extends Action {
                 $item['cname'] = $cname;
                 $item['cvalue'] = $cvalue;
                 
-                //var_dump($item);
                 $m_r_v = M('report_value');
                 $ret = $m_r_v -> add($item);
             }
@@ -93,17 +88,16 @@ class ReportAction extends Action {
         $dept_id = $m_u -> where(array("email" => $email)) -> getField('dept_id');
         $m_d = M('department');
         $proitems = $m_d -> where('pid='.$dept_id) -> select();
-        $m_r = M('report');
+        $m_p_r = D('ProReport');
         $dateRange = $this -> _getDateRange();
         for ($i = 0,$j = count($proitems); $i < $j; $i++) {
             $where = array(
                 'dept_id' => $proitems[$i]['id'],
                 'date' => array('between', array($dateRange['begin'], $dateRange['end']))
             );
-            $prodatas[$i] = $m_r -> order('date asc')
-                                 -> field('dept_id,date,income,outcome,round(income-outcome,2) as profit,round((income-outcome)/outcome,2) as profitrate') 
-                                 -> where($where)
-                                 -> select();
+            $prodatas[$i] = $m_p_r -> order('date asc') -> where($where) -> select();
+            //for($a = 0,$b = count($prodatas))
+            //var_dump($prodatas[$i]);
             for($n = 0,$m = count($prodatas[$i]); $n < $m; $n++){
                 $prodatas[$i][$n]['proname'] = $proitems[$i]['dept_name'];
             }
@@ -111,22 +105,8 @@ class ReportAction extends Action {
             $pros[$i]['proid'] = $proitems[$i]['id'];
             $pros[$i]['proname'] = $proitems[$i]['dept_name'];
         }
-        //var_dump($prodatas);die();
-        $prodatas = $prodatas[0];
-        $xdate = $this -> _getXDate($prodatas);
-        $income= $this -> _getKindData($prodatas,'income');
-        $outcome=$this -> _getKindData($prodatas,'outcome');
-        $profit=$this -> _getKindData($prodatas,'profit');
-        $profitrate=$this-> _getKindData($prodatas,'profitrate');
-        
-        $this -> assign('xdate',$xdate);
-        $this -> assign('income',$income);
-        $this -> assign('outcome',$outcome);
-        $this -> assign('profit',$profit);
-        $this -> assign('profitrate',$profitrate);
-        $this -> assign('prodatas',$prodatas);
-        $this -> assign('pros',$pros);
-
+        var_dump($prodatas);
+        die();
         $dateRange = $this -> _getDateSwap($dateRange);
         $this -> assign('dateRange',$dateRange);
         

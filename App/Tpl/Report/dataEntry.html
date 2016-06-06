@@ -60,28 +60,6 @@
               </div>
             </div>
 
-            <!-- <div class="form-group">
-              <label for="income" class="col-lg-2 control-label">收入[income]：</label>
-              <div class="col-lg-2">
-                <input type="input" name="income" id="income" class="form-control">
-              </div>
-              <label for="outcome" class="col-lg-2 control-label">支出[outcome]：</label>
-              <div class="col-lg-2">
-                <input type="input" name="outcome" id="outcome" class="form-control">
-              </div>
-            </div>
-
-            <div class="form-group">
-                <label for="profit" class="col-lg-2 control-label">利润[income-outcome]：</label>
-                <div class="col-lg-2">
-                  <input type="text" name="profit" id="profit" value="" readonly class="form-control">
-                </div>
-                <label for="profitrate" class="col-lg-2 control-label">利润率[(income-outcome)/outcome]：</label>
-                <div class="col-lg-2">
-                  <input type="text" name="profitrate" id="profitrate" readonly class="form-control">
-                </div>
-            </div> -->
-
             <volist name="rField" id="vo">
               <div class="form-group">
                   <empty name="vo.formula">
@@ -120,19 +98,6 @@
 
 <include file="Public:footer" />
 <script type="text/javascript">
-/*$('#income').bind("change",function(){  
-    var income = $('#income').val();
-    var outcome = $('#outcome').val();
-    $('#profit').val((income - outcome).toFixed(2));
-    $('#profitrate').val(((income - outcome)/outcome).toFixed(2));
-});
-$('#outcome').bind("change",function(){  
-    var income = $('#income').val();
-    var outcome = $('#outcome').val();
-    $('#profit').val((income - outcome).toFixed(2));
-    $('#profitrate').val(((income - outcome)/outcome).toFixed(2));
-});*/
-
 function storage(cname){
   var cvalue = $('#'+cname).val();
   sessionStorage.setItem(cname,cvalue);
