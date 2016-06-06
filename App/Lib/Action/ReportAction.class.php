@@ -88,24 +88,66 @@ class ReportAction extends Action {
         $dept_id = $m_u -> where(array("email" => $email)) -> getField('dept_id');
         $m_d = M('department');
         $proitems = $m_d -> where('pid='.$dept_id) -> select();
-        $m_p_r = D('ProReport');
+        
+        $m_r = M('report');
+        $m_r_c = M('report_column');
+        $m_r_v = M('report_value');
+        
         $dateRange = $this -> _getDateRange();
         for ($i = 0,$j = count($proitems); $i < $j; $i++) {
-            $where = array(
-                'dept_id' => $proitems[$i]['id'],
-                'date' => array('between', array($dateRange['begin'], $dateRange['end']))
-            );
-            $prodatas[$i] = $m_p_r -> order('date asc') -> where($where) -> select();
-            //for($a = 0,$b = count($prodatas))
-            //var_dump($prodatas[$i]);
-            for($n = 0,$m = count($prodatas[$i]); $n < $m; $n++){
-                $prodatas[$i][$n]['proname'] = $proitems[$i]['dept_name'];
-            }
-            
             $pros[$i]['proid'] = $proitems[$i]['id'];
             $pros[$i]['proname'] = $proitems[$i]['dept_name'];
         }
-        var_dump($prodatas);
+
+        $where = array(
+            'date' => array('between', array($dateRange['begin'], $dateRange['end']))
+        );
+        $reports = $m_r ->where($where) -> select();
+        foreach ($reports as $k1 => $v1) {
+            $rets = $m_r_v -> join('report_column on report_value.reportc_id = report_column.id')
+                           -> where(array("report_id" => $v1['id'])) -> select();
+            $item[$k1]['report_id'] = $v1['id'];
+            $item[$k1]['dept_id'] = $v1['dept_id'];
+            $item[$k1]['date'] = $v1['date'];
+            foreach ($rets as $k2 => $v2) {
+                $key = $v2['cname'];
+                $value = $v2['cvalue'];
+                if($v2['type'] == 1){
+                    $item[$k1][$key] = $value;
+                    $graphYdata[$k1][$key] = $value;
+                }
+                if($v2['type'] == 2){
+                    $formula = $v2['formula'];
+                    $arr = explode(' ', $formula);
+                    foreach ($arr as $k3 => $v3) {
+                        $expk = $v3;
+                        $expv = $item[$k1][$expk];
+                        if($expv !== null){
+                            $exp .= $expv;
+                        }else{
+                            $exp .= $expk;
+                        }
+                    }
+                    eval("\$ret=$exp;");
+                    $item[$k1][$key] = $ret;
+                    $graphYdata[$k1][$key] = $ret;
+                    unset($exp);
+                }
+            }
+        }
+        $this -> assign('prodatas',$item);
+        var_dump($item);
+        //die();
+        $xdate = $this -> _getXDate($item);
+        $this -> assign('xdate',$xdate);
+        foreach ($graphYdata as $k => $v) {
+            foreach ($v as $k1 => $v1) {    
+                $ydatas[$k1] = $this -> _getKindData($graphYdata,$k1);
+                $this -> assign('',$ydatas);
+            }
+        }
+        echo $xdate;
+        var_dump($ydatas);
         die();
         $dateRange = $this -> _getDateSwap($dateRange);
         $this -> assign('dateRange',$dateRange);

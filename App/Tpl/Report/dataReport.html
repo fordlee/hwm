@@ -78,10 +78,10 @@
                   <tr>
                     <td>{$v.proname}</td>
                     <td>{$v.date}</td>
-                    <td>{$v.income}</td>
-                    <td>{$v.outcome}</td>
-                    <td>{$v.profit}</td>
-                    <td>{$v.profitrate}</td>
+                    <td>{$v.impressions}</td>
+                    <td>{$v.clicks}</td>
+                    <td>{$v.ctr}</td>
+                    <td>{$v.installs}</td>
                   </tr>
                 </volist>
               </tbody>
@@ -172,25 +172,25 @@ function (start, end) {
               name:'收入',
               type:'line',
               itemStyle: {normal: {areaStyle: {type: 'default'}}},
-              data:[{$income}]
+              data:[{$impressions}]
           },
           {
               name:'支出',
               type:'line',
               itemStyle: {normal: {areaStyle: {type: 'default'}}},
-              data:[{$outcome}]
+              data:[{$clicks}]
           },
           {
               name:'利润',
               type:'line',
               itemStyle: {normal: {areaStyle: {type: 'default'}}},
-              data:[{$profit}]
+              data:[{$ctr}]
           },
           {
               name:'利润率',
               type:'line',
               itemStyle: {normal: {areaStyle: {type: 'default'}}},
-              data:[{$profitrate}]
+              data:[{$installs}]
           }
       ]
   };
