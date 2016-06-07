@@ -67,10 +67,9 @@
                 <tr>
                   <th>项目</th>
                   <th>日期</th>
-                  <th>收入</th>
-                  <th>支出</th>
-                  <th>利润</th>
-                  <th>利润率</th>
+                  <volist name="columns" id="vo">
+                    <th>{$vo.ctitle}</th>
+                  </volist>
                 </tr>
               </thead>
               <tbody>
@@ -78,10 +77,14 @@
                   <tr>
                     <td>{$v.proname}</td>
                     <td>{$v.date}</td>
-                    <td>{$v.impressions}</td>
+                    <!-- <td>{$v.impressions}</td>
                     <td>{$v.clicks}</td>
                     <td>{$v.ctr}</td>
                     <td>{$v.installs}</td>
+                    <td>{$v.ir}</td> -->
+                    <volist name="columns" id="vo">
+                      <td>$v.{$vo.cname}</td>
+                    </volist>
                   </tr>
                 </volist>
               </tbody>
@@ -105,14 +108,13 @@
   function dateinit() {
     $('#daterange-btn').daterangepicker({
       ranges: {
-        'Today': [moment(), moment()],
-        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+        'Yesterday': [moment().subtract(1, 'days'), moment()],
+        'Last 7 Days': [moment().subtract(7, 'days'), moment()],
+        'Last 30 Days': [moment().subtract(30, 'days'), moment()],
         'This Month': [moment().startOf('month'), moment().endOf('month')],
         'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
       },
-      startDate: moment().subtract(6, 'days'),
+      startDate: moment().subtract(7, 'days'),
       endDate: moment()
     },
 function (start, end) {
@@ -130,13 +132,13 @@ function (start, end) {
   // 指定图表的配置项和数据
   option = {
       title: {
-          text: '利润情况图'
+          text: '报表统计图'
       },
       tooltip : {
           trigger: 'axis'
       },
       legend: {
-          data:['收入','支出','利润','利润率']
+          data:[{$cname}]
       },
       toolbox: {
         show : true,
@@ -167,33 +169,29 @@ function (start, end) {
               type : 'value'
           }
       ],
-      series : [
-          {
-              name:'收入',
-              type:'line',
-              itemStyle: {normal: {areaStyle: {type: 'default'}}},
-              data:[{$impressions}]
-          },
-          {
-              name:'支出',
-              type:'line',
-              itemStyle: {normal: {areaStyle: {type: 'default'}}},
-              data:[{$clicks}]
-          },
-          {
-              name:'利润',
-              type:'line',
-              itemStyle: {normal: {areaStyle: {type: 'default'}}},
-              data:[{$ctr}]
-          },
-          {
-              name:'利润率',
-              type:'line',
-              itemStyle: {normal: {areaStyle: {type: 'default'}}},
-              data:[{$installs}]
-          }
-      ]
+
+      series : []
+
   };
+
+  var ret = {$ydatas|json_encode};
+  var columns = {$columns|json_encode};
+  for (var i = 0, j = columns.length; i < j; i++) {
+      var cname = columns[i].cname;
+      var cdata = ret[cname];
+      console.log(cdata);
+      var syscData = {
+          name:cname,
+          type:'line',
+          itemStyle: {normal: {areaStyle: {type: 'default'}}},
+          data:[]
+      };
+      var arr = cdata.split(",");
+      for(var a=0,b=arr.length;a<b;a++){
+        syscData.data.push(parseFloat(arr[a]));
+      }
+      option.series.push(syscData);
+  }
 
   // 使用刚指定的配置项和数据显示图表。
   myChart.setOption(option);

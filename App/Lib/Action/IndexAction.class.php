@@ -74,11 +74,11 @@ class IndexAction extends Action {
         eval($exp);
         echo $p;
 
-        try{
+        /*try{
             $exp="\$ctr_exp=(100-50)/100;";
             eval($exp);
         }catch(e){}
-        if(defined(name)$ctr_exp){$ctr=ctr_exp;}
+        if(defined(name)$ctr_exp){$ctr=ctr_exp;}*/
 
     }
 

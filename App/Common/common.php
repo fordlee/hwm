@@ -25,15 +25,4 @@
 		return $html ? '<ul>'.$html.'</ul>' : $html ;
 	}
 
-	function getDeptList($data,$pid){
-		$list = '';
-		/*<if condition="($schild.pid neq '')">
-          <volist name="schild.pid" id="tchild">
-            <option value="{$tchild.id}">
-            {$tchild.dept_name}
-            </option>
-          </volist>
-        </if>*/
-	}
-
 ?>

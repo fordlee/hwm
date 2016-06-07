@@ -90,7 +90,6 @@ class ReportAction extends Action {
         $proitems = $m_d -> where('pid='.$dept_id) -> select();
         
         $m_r = M('report');
-        $m_r_c = M('report_column');
         $m_r_v = M('report_value');
         
         $dateRange = $this -> _getDateRange();
@@ -98,16 +97,19 @@ class ReportAction extends Action {
             $pros[$i]['proid'] = $proitems[$i]['id'];
             $pros[$i]['proname'] = $proitems[$i]['dept_name'];
         }
-
+        $proid = $pros[0]['proid'];
+        $proname = $pros[0]['proname'];
         $where = array(
+            'dept_id' => $proid,
             'date' => array('between', array($dateRange['begin'], $dateRange['end']))
         );
-        $reports = $m_r ->where($where) -> select();
+        $reports = $m_r -> order('date asc') -> where($where) -> select();
         foreach ($reports as $k1 => $v1) {
             $rets = $m_r_v -> join('report_column on report_value.reportc_id = report_column.id')
                            -> where(array("report_id" => $v1['id'])) -> select();
             $item[$k1]['report_id'] = $v1['id'];
             $item[$k1]['dept_id'] = $v1['dept_id'];
+            $item[$k1]['proname'] = $proname;
             $item[$k1]['date'] = $v1['date'];
             foreach ($rets as $k2 => $v2) {
                 $key = $v2['cname'];
@@ -128,30 +130,39 @@ class ReportAction extends Action {
                             $exp .= $expk;
                         }
                     }
-                    eval("\$ret=$exp;");
+                    try {
+                        eval("\$ret=$exp;");
+                    } catch (Exception $e) {
+                        echo 'Message: ' .$e->getMessage();
+                    }   
                     $item[$k1][$key] = $ret;
                     $graphYdata[$k1][$key] = $ret;
                     unset($exp);
                 }
             }
         }
+        $m_r_c = M('report_column');
+        $columns = $m_r_c -> field('cname,ctitle') -> where(array('dept_id' => $proid)) -> select();
+        
         $this -> assign('prodatas',$item);
-        var_dump($item);
-        //die();
+        $this -> assign('pros',$pros);
+        $this -> assign('proid',$proid);
+        $this -> assign('columns',$columns);
+        
+        $titledata = $this -> _getTitleData($columns,'cname');
+        $this -> assign('cname',$titledata);
+
         $xdate = $this -> _getXDate($item);
         $this -> assign('xdate',$xdate);
         foreach ($graphYdata as $k => $v) {
-            foreach ($v as $k1 => $v1) {    
+            foreach ($v as $k1 => $v1) {  
                 $ydatas[$k1] = $this -> _getKindData($graphYdata,$k1);
-                $this -> assign('',$ydatas);
             }
         }
-        echo $xdate;
-        var_dump($ydatas);
-        die();
+        $this -> assign('ydatas',$ydatas);
+
         $dateRange = $this -> _getDateSwap($dateRange);
         $this -> assign('dateRange',$dateRange);
-        
     	$this -> display();
     }
 
@@ -164,49 +175,78 @@ class ReportAction extends Action {
         $dept_id = $m_u -> where(array("email" => $email)) -> getField('dept_id');
         $m_d = M('department');
         $proitems = $m_d -> where('pid='.$dept_id) -> select();
+        
         $m_r = M('report');
+        $m_r_v = M('report_value');
+        
         $dateRange = $this -> _getDateSwap($dateRange);
         for ($i = 0,$j = count($proitems); $i < $j; $i++) {
-            $where = array(
-                'dept_id' => $proitems[$i]['id'],
-                'date' => array('between', array($dateRange['begin'], $dateRange['end']))
-            );
-            $prodatas[$i] = $m_r -> order('date asc') 
-                                 -> field('dept_id,date,income,outcome,round(income-outcome,2) as profit,round((income-outcome)/outcome,2) as profitrate') 
-                                 -> where($where)
-                                 -> select();
-            for($n = 0,$m = count($prodatas[$i]); $n < $m; $n++){
-                $prodatas[$i][$n]['proname'] = $proitems[$i]['dept_name'];
-            }
-            
             $pros[$i]['proid'] = $proitems[$i]['id'];
             $pros[$i]['proname'] = $proitems[$i]['dept_name'];
         }
-
-        $proarr = array();
-        foreach ($prodatas as $k1 => $v1) {
-            foreach ($v1 as $k2 => $v2) {
-                if($v2['dept_id'] == $proid){
-                    $proarr = $prodatas[$k1];
-                    break;
+        $proname = $pros[0]['proname'];
+        $where = array(
+            'dept_id' => $proid,
+            'date' => array('between', array($dateRange['begin'], $dateRange['end']))
+        );
+        $reports = $m_r -> order('date asc') -> where($where) -> select();
+        foreach ($reports as $k1 => $v1) {
+            $rets = $m_r_v -> join('report_column on report_value.reportc_id = report_column.id')
+                           -> where(array("report_id" => $v1['id'])) -> select();
+            $item[$k1]['report_id'] = $v1['id'];
+            $item[$k1]['dept_id'] = $v1['dept_id'];
+            $item[$k1]['proname'] = $proname;
+            $item[$k1]['date'] = $v1['date'];
+            foreach ($rets as $k2 => $v2) {
+                $key = $v2['cname'];
+                $value = $v2['cvalue'];
+                if($v2['type'] == 1){
+                    $item[$k1][$key] = $value;
+                    $graphYdata[$k1][$key] = $value;
+                }
+                if($v2['type'] == 2){
+                    $formula = $v2['formula'];
+                    $arr = explode(' ', $formula);
+                    foreach ($arr as $k3 => $v3) {
+                        $expk = $v3;
+                        $expv = $item[$k1][$expk];
+                        if($expv !== null){
+                            $exp .= $expv;
+                        }else{
+                            $exp .= $expk;
+                        }
+                    }
+                    try {
+                        eval("\$ret=$exp;");
+                    } catch (Exception $e) {
+                        echo 'Message: ' .$e->getMessage();
+                    }   
+                    $item[$k1][$key] = $ret;
+                    $graphYdata[$k1][$key] = $ret;
+                    unset($exp);
                 }
             }
         }
-        //var_dump($proarr);die();
-        $xdate = $this -> _getXDate($proarr);
-        $income= $this -> _getKindData($proarr,'income');
-        $outcome=$this -> _getKindData($proarr,'outcome');
-        $profit=$this -> _getKindData($proarr,'profit');
-        $profitrate=$this-> _getKindData($proarr,'profitrate');
+        $m_r_c = M('report_column');
+        $columns = $m_r_c -> field('cname,ctitle') -> where(array('dept_id' => $proid)) -> select();
         
-        $this -> assign('xdate',$xdate);
-        $this -> assign('income',$income);
-        $this -> assign('outcome',$outcome);
-        $this -> assign('profit',$profit);
-        $this -> assign('profitrate',$profitrate);
-        $this -> assign('prodatas',$proarr);
+        $this -> assign('prodatas',$item);
         $this -> assign('pros',$pros);
         $this -> assign('proid',$proid);
+        $this -> assign('columns',$columns);
+        
+        $titledata = $this -> _getTitleData($columns,'cname');
+        $this -> assign('cname',$titledata);
+
+        $xdate = $this -> _getXDate($item);
+        $this -> assign('xdate',$xdate);
+        foreach ($graphYdata as $k => $v) {
+            foreach ($v as $k1 => $v1) {  
+                $ydatas[$k1] = $this -> _getKindData($graphYdata,$k1);
+            }
+        }
+        $this -> assign('ydatas',$ydatas);
+
         $dateRange = $this -> _getDateSwap($dateRange);
         $this -> assign('dateRange',$dateRange);
         
@@ -227,6 +267,14 @@ class ReportAction extends Action {
         }
         $xdate = substr($xdate, 0, -1);
         return $xdate;
+    }
+
+    private function _getTitleData($data,$title){
+        foreach ($data as $k => $v) {
+            $titledata .= '"'.$v[$title].'"'.",";
+        }
+        $titledata = substr($titledata, 0, -1);
+        return $titledata;
     }
 
     private function _getDateSwap($dateRange){

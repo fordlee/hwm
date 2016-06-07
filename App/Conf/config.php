@@ -11,7 +11,7 @@ return array(
 	),
 
 	//打开页面跟踪
-    'SHOW_PAGE_TRACE' => true,
+    //'SHOW_PAGE_TRACE' => true,
 	
 	//数据库相关
 	'DB_PREFIX' => '',
