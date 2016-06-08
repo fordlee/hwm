@@ -77,13 +77,8 @@
                   <tr>
                     <td>{$v.proname}</td>
                     <td>{$v.date}</td>
-                    <!-- <td>{$v.impressions}</td>
-                    <td>{$v.clicks}</td>
-                    <td>{$v.ctr}</td>
-                    <td>{$v.installs}</td>
-                    <td>{$v.ir}</td> -->
                     <volist name="columns" id="vo">
-                      <td>$v.{$vo.cname}</td>
+                      <td><?php echo $v[$vo["cname"]] ?></td>
                     </volist>
                   </tr>
                 </volist>

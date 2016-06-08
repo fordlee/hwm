@@ -45,14 +45,27 @@ class ReportAction extends Action {
             $data['operator'] = $_SESSION['name'];
             $data['operator_time'] = date('Y-m-d H:i:s');
             $m_r = M('report');
-            $report_id = $m_r -> add($data);
-
+            $where = array(
+                "dept_id" => $proid,
+                "date" => $reportdate
+            );
+            $report = $m_r -> where($where) -> find();
+            if($report !== null){
+                $report_id = $report['id'];
+            }else{
+                $report_id = $m_r -> add($data);
+            }
+            
             $m_r_c = M('report_column');
             $rcfields = $m_r_c -> where('dept_id='.$proid) -> select();
             foreach ($rcfields as $k => $v) {
                 $rcid = $v['id'];
                 $cname = $v['cname'];
-                $cvalue = $_POST[$cname];
+                if($v['type'] == 1){
+                    $cvalue = $_POST[$cname];
+                }else{
+                    $cvalue = '';
+                }
 
                 $item['report_id'] = $report_id;
                 $item['reportc_id'] = $rcid;
@@ -61,7 +74,17 @@ class ReportAction extends Action {
                 $item['cvalue'] = $cvalue;
                 
                 $m_r_v = M('report_value');
-                $ret = $m_r_v -> add($item);
+                $w = array(
+                    "report_id" => $report_id,
+                    "reportc_id" => $rcid
+                );
+                $rv = $m_r_v -> where($w) -> find();
+                if($rv !== null){
+                    $rvid = $rv['id'];
+                    $ret = $m_r_v -> where(array("id"=>$rvid)) -> save($item);
+                }else{
+                    $ret = $m_r_v -> add($item);
+                }                
             }
             if($ret !== false){
                 $this -> success('数据录入成功！');
@@ -167,9 +190,16 @@ class ReportAction extends Action {
     }
 
     public function reportSelect(){
-        $dateRange = $_POST['dateRange'];
-        $proid = $_POST['proid'];
-        
+        if(isset($_POST['dateRange']) && !empty($_POST['dateRange'])
+            && isset($_POST['proid']) && !empty($_POST['proid'])){
+            $dateRange = $_POST['dateRange'];
+            $proid = $_POST['proid'];
+            $dateRange = $this -> _getDateSwap($dateRange);
+        }else{
+            $proid = $_GET['id'];
+            $dateRange = $this -> _getDateRange();
+        }
+
         $email = $_SESSION['username'];
         $m_u = M('user');
         $dept_id = $m_u -> where(array("email" => $email)) -> getField('dept_id');
@@ -179,7 +209,6 @@ class ReportAction extends Action {
         $m_r = M('report');
         $m_r_v = M('report_value');
         
-        $dateRange = $this -> _getDateSwap($dateRange);
         for ($i = 0,$j = count($proitems); $i < $j; $i++) {
             $pros[$i]['proid'] = $proitems[$i]['id'];
             $pros[$i]['proname'] = $proitems[$i]['dept_name'];
