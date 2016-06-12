@@ -175,7 +175,7 @@ function (start, end) {
       var cname = columns[i].cname;
       var cdata = ret[cname];
       console.log(cdata);
-      var syscData = {
+      var dynamicData = {
           name:cname,
           type:'line',
           itemStyle: {normal: {areaStyle: {type: 'default'}}},
@@ -183,9 +183,9 @@ function (start, end) {
       };
       var arr = cdata.split(",");
       for(var a=0,b=arr.length;a<b;a++){
-        syscData.data.push(parseFloat(arr[a]));
+        dynamicData.data.push(parseFloat(arr[a]));
       }
-      option.series.push(syscData);
+      option.series.push(dynamicData);
   }
 
   // 使用刚指定的配置项和数据显示图表。

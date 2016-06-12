@@ -31,7 +31,7 @@
               <input type="hidden" name="proid" value="{$proid}" >
               <label for="dept" class="col-lg-2 control-label">部门：</label>
               <div class="col-lg-2">
-                <select name="dept" class="form-control">
+                <select name="dept" disabled class="form-control">
                   <volist name="deptInfo" id="vo">
                     <if condition="$vo.pid eq 0">
                     <option value="{$vo.id}">{$vo.dept_name}</option>
@@ -41,7 +41,7 @@
               </div>
               <label for="pro" class="col-lg-2 control-label">项目：</label>
               <div class="col-lg-2">
-                <select name="pro" class="form-control">
+                <select name="pro" disabled class="form-control">
                   <volist name="deptInfo" id="vo">
                     <if condition="$vo.pid neq 0">
                       <option value="{$vo.id}" <?php if($vo['id'] == $proid) echo "selected"?>>
