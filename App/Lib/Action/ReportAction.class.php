@@ -158,8 +158,8 @@ class ReportAction extends Action {
                     } catch (Exception $e) {
                         echo 'Message: ' .$e->getMessage();
                     }   
-                    $item[$k1][$key] = $ret;
-                    $graphYdata[$k1][$key] = $ret;
+                    $item[$k1][$key] = round($ret,2);
+                    $graphYdata[$k1][$key] = round($ret,2);
                     unset($exp);
                 }
             }
@@ -250,8 +250,8 @@ class ReportAction extends Action {
                     } catch (Exception $e) {
                         echo 'Message: ' .$e->getMessage();
                     }   
-                    $item[$k1][$key] = $ret;
-                    $graphYdata[$k1][$key] = $ret;
+                    $item[$k1][$key] = round($ret,2);
+                    $graphYdata[$k1][$key] = round($ret,2);
                     unset($exp);
                 }
             }
