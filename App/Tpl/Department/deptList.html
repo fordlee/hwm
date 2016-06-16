@@ -37,7 +37,9 @@
               <div class="box">
                 <div class="box-header">
                   <h3 class="box-title">部门管理</h3>
-                  <a href="__URL__/deptAdd" class="btn btn-success pull-right">添加部门</a>
+                  <if condition="$_SESSION['level'] lt 2">
+                    <a href="__URL__/deptAdd" class="btn btn-success pull-right">添加部门</a>
+                  </if>
                 </div><!-- /.box-header -->
                 <div class="box-body">
                   <table id="example2" class="table table-bordered table-hover">

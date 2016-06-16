@@ -56,7 +56,7 @@
               </div>
               <div class="form-group">
                 <div class="col-lg-1">
-                  <button type="submit" class="btn btn-success pull-right">保存</button>
+                  <button type="submit" class="btn btn-success pull-right">添加</button>
                 </div>
               </div>
 
@@ -68,6 +68,7 @@
         <div class="box box-info">
           <div class="box-header with-border">
             <h3 class="box-title">项目报表字段预览</h3>
+            <button id="pfeBtn" onclick="showProFieldEdit()" class="btn btn-success pull-right">修改</button>
           </div><!-- /.box-header -->
           <div class="box-body">
             <volist name="ret" id="vo">
@@ -81,6 +82,61 @@
               </div>
             </volist>
           </div>
+
+          <div id="pfeForm" style="display:none">
+            <!-- form start -->
+            <form action="__URL__/proFieldEdit" method="post" class="form-horizontal">
+              <div class="box-body">
+                <input type="hidden" name="proid" value="{$proid}">
+                <div class="form-group">
+                  <label for="type" class="col-lg-1 control-label">字段类型：</label>
+                  <div class="col-lg-2">
+                    <select name="type" id="columnTypeEdit" class="form-control">
+                      <option value="1">手动</option>
+                      <option value="2">公式</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="proColumn" class="col-lg-1 control-label" >原字段名：</label>
+                  <div class="col-lg-2">
+                    <input type="text" name="oldProColumn" class="form-control" placeholder="英文名">
+                  </div>
+                  <label for="proColumn" class="col-lg-1 control-label" >新字段名：</label>
+                  <div class="col-lg-2">
+                    <input type="text" name="newProColumn" class="form-control" placeholder="英文名">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="proTitle" class="col-lg-1 control-label" >原标题：</label>
+                  <div class="col-lg-2">
+                    <input type="text" name="oldProTitle" class="form-control" placeholder="中文标题">
+                  </div>
+                  <label for="proTitle" class="col-lg-1 control-label" >新标题：</label>
+                  <div class="col-lg-2">
+                    <input type="text" name="newProTitle" class="form-control" placeholder="中文标题">
+                  </div>
+                </div>
+                <div class="form-group" id="formulaEdit" style="display:none;">
+                  <label for="formula" class="col-lg-1 control-label" >原公式：</label>
+                  <div class="col-lg-2">
+                    <input type="text" name="oldFormula" class="form-control" >
+                  </div>
+                  <label for="formula" class="col-lg-1 control-label" >新公式：</label>
+                  <div class="col-lg-2">
+                    <input type="text" name="newFormula" class="form-control" >
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-lg-1">
+                    <button type="submit" class="btn btn-success pull-right">保存</button>
+                  </div>
+                </div>
+
+              </div><!-- /.box-body -->
+            </form>
+          </div>
+
         </div>
     </div><!-- /. col-md-15 -->
 
@@ -95,6 +151,19 @@ $('#columnType').change(function(e) {
         $('#formuladiv').show();
     } else {
         $('#formuladiv').hide();
+    }
+});
+
+function showProFieldEdit(){
+  $('#pfeForm').toggle();
+}
+
+$('#columnTypeEdit').change(function(e) {
+    var value = this.value;
+    if (value == 2) {
+        $('#formulaEdit').show();
+    } else {
+        $('#formulaEdit').hide();
     }
 });
 </script>

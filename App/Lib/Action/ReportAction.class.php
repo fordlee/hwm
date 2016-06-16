@@ -113,8 +113,9 @@ class ReportAction extends Action {
         $proitems = $m_d -> where('pid='.$dept_id) -> select();
         
         $m_r = M('report');
+        $m_r_c = M('report_column');
         $m_r_v = M('report_value');
-        
+
         $dateRange = $this -> _getDateRange();
         for ($i = 0,$j = count($proitems); $i < $j; $i++) {
             $pros[$i]['proid'] = $proitems[$i]['id'];
@@ -128,8 +129,8 @@ class ReportAction extends Action {
         );
         $reports = $m_r -> order('date asc') -> where($where) -> select();
         foreach ($reports as $k1 => $v1) {
-            $rets = $m_r_v -> join('report_column on report_value.reportc_id = report_column.id')
-                           -> where(array("report_id" => $v1['id'])) -> select();
+            $rets = $m_r_v -> join('report_column on report_value.reportc_id = report_column.id') -> where(array("report_id" => $v1['id'])) -> select();
+
             $item[$k1]['report_id'] = $v1['id'];
             $item[$k1]['dept_id'] = $v1['dept_id'];
             $item[$k1]['proname'] = $proname;
@@ -143,6 +144,13 @@ class ReportAction extends Action {
                 }
                 if($v2['type'] == 2){
                     $formula = $v2['formula'];
+                    $formulaStr = $v2['formula'];
+
+                    $startMark = substr($formulaStr, 0, strpos($formulaStr,"{"));
+                    $endMark = substr($formulaStr, strpos($formulaStr, "}")+1 , strlen($formulaStr)-1);
+
+                    preg_match('/\{([^\}]+)\}/', $formulaStr,$formulaArr);
+                    $formula = $formulaArr[1];
                     $arr = explode(' ', $formula);
                     foreach ($arr as $k3 => $v3) {
                         $expk = $v3;
@@ -158,15 +166,14 @@ class ReportAction extends Action {
                     } catch (Exception $e) {
                         echo 'Message: ' .$e->getMessage();
                     }   
-                    $item[$k1][$key] = round($ret,2);
+                    $item[$k1][$key] = $startMark.round($ret,2).$endMark;
                     $graphYdata[$k1][$key] = round($ret,2);
                     unset($exp);
                 }
             }
         }
-        $m_r_c = M('report_column');
-        $columns = $m_r_c -> field('cname,ctitle') -> where(array('dept_id' => $proid)) -> select();
         
+        $columns = $m_r_c -> field('cname,ctitle') -> where(array('dept_id' => $proid)) -> select();
         $this -> assign('prodatas',$item);
         $this -> assign('pros',$pros);
         $this -> assign('proid',$proid);
@@ -183,7 +190,7 @@ class ReportAction extends Action {
             }
         }
         $this -> assign('ydatas',$ydatas);
-
+        
         $dateRange = $this -> _getDateSwap($dateRange);
         $this -> assign('dateRange',$dateRange);
     	$this -> display();
@@ -207,6 +214,7 @@ class ReportAction extends Action {
         $proitems = $m_d -> where('pid='.$dept_id) -> select();
         
         $m_r = M('report');
+        $m_r_c = M('report_column');
         $m_r_v = M('report_value');
         
         for ($i = 0,$j = count($proitems); $i < $j; $i++) {
@@ -220,8 +228,7 @@ class ReportAction extends Action {
         );
         $reports = $m_r -> order('date asc') -> where($where) -> select();
         foreach ($reports as $k1 => $v1) {
-            $rets = $m_r_v -> join('report_column on report_value.reportc_id = report_column.id')
-                           -> where(array("report_id" => $v1['id'])) -> select();
+            $rets = $m_r_v -> join('report_column on report_value.reportc_id = report_column.id') -> where(array("report_id" => $v1['id'])) -> select();
             $item[$k1]['report_id'] = $v1['id'];
             $item[$k1]['dept_id'] = $v1['dept_id'];
             $item[$k1]['proname'] = $proname;
@@ -234,7 +241,13 @@ class ReportAction extends Action {
                     $graphYdata[$k1][$key] = $value;
                 }
                 if($v2['type'] == 2){
-                    $formula = $v2['formula'];
+                    $formulaStr = $v2['formula'];
+
+                    $startMark = substr($formulaStr, 0, strpos($formulaStr,"{"));
+                    $endMark = substr($formulaStr, strpos($formulaStr, "}")+1 , strlen($formulaStr)-1);
+
+                    preg_match('/\{([^\}]+)\}/', $formulaStr,$formulaArr);
+                    $formula = $formulaArr[1];
                     $arr = explode(' ', $formula);
                     foreach ($arr as $k3 => $v3) {
                         $expk = $v3;
@@ -250,15 +263,14 @@ class ReportAction extends Action {
                     } catch (Exception $e) {
                         echo 'Message: ' .$e->getMessage();
                     }   
-                    $item[$k1][$key] = round($ret,2);
+                    $item[$k1][$key] = $startMark.round($ret,2).$endMark;
                     $graphYdata[$k1][$key] = round($ret,2);
                     unset($exp);
                 }
             }
         }
-        $m_r_c = M('report_column');
-        $columns = $m_r_c -> field('cname,ctitle') -> where(array('dept_id' => $proid)) -> select();
         
+        $columns = $m_r_c -> field('cname,ctitle') -> where(array('dept_id' => $proid)) -> select();
         $this -> assign('prodatas',$item);
         $this -> assign('pros',$pros);
         $this -> assign('proid',$proid);
@@ -330,6 +342,7 @@ class ReportAction extends Action {
         );
         return $ret;
     }
+
 
 }
 ?>

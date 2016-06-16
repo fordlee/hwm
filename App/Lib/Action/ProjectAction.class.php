@@ -143,6 +143,43 @@ class ProjectAction extends Action {
     }
 
     public function proFieldEdit(){
-        
+        $m_r_c = M('report_column');
+        $proid = $_POST['proid'];
+        $type = $_POST['type'];
+        $oldProColumn = $_POST['oldProColumn'];
+        $oldProTitle = $_POST['oldProTitle'];
+        $oldFormula = $_POST['oldFormula'];
+        $oldData = array(
+            "dept_id" => $proid,
+            "cname" => $oldProColumn,
+            "ctitle" => $oldProTitle,
+            "type" => $type,
+            "formula" => $oldFormula
+        );
+
+        $oldrc = $m_r_c -> where($oldData) -> find();
+
+        $newProColumn = $_POST['newProColumn'];
+        $newProTitle = $_POST['newProTitle'];
+        $newFormula = $_POST['newFormula'];
+        $newData = array(
+            "dept_id" => $proid,
+            "cname" => $newProColumn,
+            "ctitle" => $newProTitle,
+            "type" => $type,
+            "formula" => $newFormula
+        );
+
+        if($oldrc !== null){
+            $ret = $m_r_c -> where($oldData) -> save($newData);
+        }else{
+            $ret = true;
+        }
+
+        if($ret !== false){
+            $this -> success('修改成功!');
+        }else{
+            $this -> error('修改失败!');
+        }
     }
 }

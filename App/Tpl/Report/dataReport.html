@@ -78,7 +78,13 @@
                     <td>{$v.proname}</td>
                     <td>{$v.date}</td>
                     <volist name="columns" id="vo">
-                      <td><?php echo $v[$vo["cname"]] ?></td>
+                      <td>
+                        <?php if($v[$vo["cname"]] == null){
+                          echo "-";
+                        }else{
+                          echo $v[$vo["cname"]];
+                        } ?>
+                      </td>
                     </volist>
                   </tr>
                 </volist>
@@ -174,16 +180,26 @@ function (start, end) {
   for (var i = 0, j = columns.length; i < j; i++) {
       var cname = columns[i].cname;
       var cdata = ret[cname];
-      console.log(cdata);
+      //console.log(cdata);
+
       var dynamicData = {
           name:cname,
           type:'line',
           itemStyle: {normal: {areaStyle: {type: 'default'}}},
           data:[]
       };
-      var arr = cdata.split(",");
+      if(cdata == undefined){
+        var arr = [];
+        arr.length = 31;
+      }else{
+        var arr = cdata.split(",");
+      }
       for(var a=0,b=arr.length;a<b;a++){
-        dynamicData.data.push(parseFloat(arr[a]));
+        if(isNaN(parseFloat(arr[a]))){
+          dynamicData.data.push(0);
+        }else{
+          dynamicData.data.push(parseFloat(arr[a]));
+        }
       }
       option.series.push(dynamicData);
   }
