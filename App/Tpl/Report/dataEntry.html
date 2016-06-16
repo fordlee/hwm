@@ -105,6 +105,9 @@ function storage(cname){
 
 function calculate(cname,formula){
   var strArr = new Array();
+  var patten = new RegExp(/\{([^\}]+)\}/);
+  var formula = formula.match(patten);
+  var formula = formula[1];
   strArr=formula.split(" ");
   var express = "";
   for (i=0;i<strArr.length;i++ ){

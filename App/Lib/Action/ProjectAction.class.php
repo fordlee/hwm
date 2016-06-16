@@ -118,7 +118,17 @@ class ProjectAction extends Action {
             $proColumn = $_POST['proColumn'];
             $proTitle = $_POST['proTitle'];
             $type = $_POST['type'];
-            $formula = $_POST['formula'];
+            $local = $_POST['local'];
+            if($type == 1){
+                if($local == 1){
+                    $formula = $_POST['proUnit'].' { }';
+                }else{
+                    $formula = '{ } '.$_POST['proUnit'];
+                }
+            }else{
+                $formula = $_POST['formula'];
+            }
+            
             $data = array(
                 "dept_id" => $proid,
                 "cname" => $proColumn,

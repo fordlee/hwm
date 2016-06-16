@@ -138,23 +138,22 @@ class ReportAction extends Action {
             foreach ($rets as $k2 => $v2) {
                 $key = $v2['cname'];
                 $value = $v2['cvalue'];
+                $formulaStr = $v2['formula'];
+                $startMark = substr($formulaStr, 0, strpos($formulaStr,"{"));
+                $endMark = substr($formulaStr, strpos($formulaStr, "}")+1 , strlen($formulaStr)-1);
                 if($v2['type'] == 1){
-                    $item[$k1][$key] = $value;
+                    $item[$k1][$key] = $startMark.$value.$endMark;
+                    $itemtmp[$k1][$key] = $value;
                     $graphYdata[$k1][$key] = $value;
                 }
                 if($v2['type'] == 2){
-                    $formula = $v2['formula'];
-                    $formulaStr = $v2['formula'];
-
-                    $startMark = substr($formulaStr, 0, strpos($formulaStr,"{"));
-                    $endMark = substr($formulaStr, strpos($formulaStr, "}")+1 , strlen($formulaStr)-1);
-
                     preg_match('/\{([^\}]+)\}/', $formulaStr,$formulaArr);
-                    $formula = $formulaArr[1];
-                    $arr = explode(' ', $formula);
+                    $formulaStr = $formulaArr[1];
+
+                    $arr = explode(' ', $formulaStr);
                     foreach ($arr as $k3 => $v3) {
                         $expk = $v3;
-                        $expv = $item[$k1][$expk];
+                        $expv = $itemtmp[$k1][$expk];
                         if($expv !== null){
                             $exp .= $expv;
                         }else{
@@ -236,22 +235,21 @@ class ReportAction extends Action {
             foreach ($rets as $k2 => $v2) {
                 $key = $v2['cname'];
                 $value = $v2['cvalue'];
+                $formulaStr = $v2['formula'];
+                $startMark = substr($formulaStr, 0, strpos($formulaStr,"{"));
+                $endMark = substr($formulaStr, strpos($formulaStr, "}")+1 , strlen($formulaStr)-1);
                 if($v2['type'] == 1){
-                    $item[$k1][$key] = $value;
+                    $item[$k1][$key] = $startMark.$value.$endMark;
+                    $itemtmp[$k1][$key] = $value;
                     $graphYdata[$k1][$key] = $value;
                 }
                 if($v2['type'] == 2){
-                    $formulaStr = $v2['formula'];
-
-                    $startMark = substr($formulaStr, 0, strpos($formulaStr,"{"));
-                    $endMark = substr($formulaStr, strpos($formulaStr, "}")+1 , strlen($formulaStr)-1);
-
                     preg_match('/\{([^\}]+)\}/', $formulaStr,$formulaArr);
-                    $formula = $formulaArr[1];
-                    $arr = explode(' ', $formula);
+                    $formulaStr = $formulaArr[1];
+                    $arr = explode(' ', $formulaStr);
                     foreach ($arr as $k3 => $v3) {
                         $expk = $v3;
-                        $expv = $item[$k1][$expk];
+                        $expv = $itemtmp[$k1][$expk];
                         if($expv !== null){
                             $exp .= $expv;
                         }else{
@@ -271,7 +269,7 @@ class ReportAction extends Action {
         }
         
         $columns = $m_r_c -> field('cname,ctitle') -> where(array('dept_id' => $proid)) -> select();
-        $this -> assign('prodatas',$item);
+        $this -> assign('prodatas',$item);//var_dump($item);die();
         $this -> assign('pros',$pros);
         $this -> assign('proid',$proid);
         $this -> assign('columns',$columns);
@@ -337,7 +335,7 @@ class ReportAction extends Action {
     private function _getDateRange() {
         $today = strtotime(date('Y-m-d'));
         $ret = array (
-            'begin' => date('Y-m-d', strtotime('-6 day', $today)),
+            'begin' => date('Y-m-d', strtotime('-7 day', $today)),
             'end' => date('Y-m-d')
         );
         return $ret;
