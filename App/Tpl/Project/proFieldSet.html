@@ -48,7 +48,14 @@
                   <input type="text" name="proTitle" class="form-control" placeholder="中文标题">
                 </div>
               </div>
-              <div class="form-group" id="proUnitdiv">
+              <div class="form-group" id="setUnitdiv">
+                <div class="checkbox">
+                  <label class="col-lg-2 pull-rignt" style="padding-left:50px">
+                    <input type="checkbox" name="setUnit" id="setUnit"> 设置字段单位
+                  </label>
+                </div>
+              </div>
+              <div class="form-group" id="proUnitdiv" style="display:none">
                 <label for="proUnit" class="col-lg-1 control-label" >字段单位：</label>
                 <div class="col-lg-2">
                   <input type="text" name="proUnit" class="form-control" placeholder="可以为空">
@@ -76,7 +83,7 @@
         <div class="box box-info">
           <div class="box-header with-border">
             <h3 class="box-title">项目报表字段预览</h3>
-            <button id="pfeBtn" onclick="showProFieldEdit()" class="btn btn-success pull-right">修改</button>
+            <button id="pfeBtn" class="btn btn-success pull-right">修改</button>
           </div><!-- /.box-header -->
           <div class="box-body">
             <volist name="ret" id="vo">
@@ -125,6 +132,21 @@
                     <input type="text" name="newProTitle" class="form-control" placeholder="中文标题">
                   </div>
                 </div>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label class="col-lg-2 pull-rignt" style="padding-left:50px">
+                      <input type="checkbox" name="setUnitEdit" id="setUnitEdit"> 设置字段单位
+                    </label>
+                  </div>
+                </div>
+                <div class="form-group" id="proUnitEditdiv" style="display:none">
+                  <label for="proUnit" class="col-lg-1 control-label" >字段单位：</label>
+                  <div class="col-lg-2">
+                    <input type="text" name="proUnitEdit" class="form-control" placeholder="可以为空">
+                  </div>
+                  <input type="radio" name="localEdit" value="1" checked>开头
+                  <input type="radio" name="localEdit" value="2" >末尾
+                </div>
                 <div class="form-group" id="formulaEdit" style="display:none;">
                   <label for="formula" class="col-lg-1 control-label" >原公式：</label>
                   <div class="col-lg-2">
@@ -156,17 +178,26 @@
 $('#columnType').change(function(e) {
     var value = this.value;
     if (value == 2) {
-        $('#proUnitdiv').hide();
+        $('#setUnitdiv').hide();
         $('#formuladiv').show();
     } else {
         $('#formuladiv').hide();
-        $('#proUnitdiv').show();
+        $('#setUnitdiv').show();
     }
 });
 
-function showProFieldEdit(){
+$('#setUnit').click(function(){
+  var isCkecked = $('#setUnit').is(':checked');
+  if (isCkecked) {
+    $('#proUnitdiv').show();
+  }else{
+    $('#proUnitdiv').hide();
+  }
+});
+
+$('#pfeBtn').click(function(){
   $('#pfeForm').toggle();
-}
+});
 
 $('#columnTypeEdit').change(function(e) {
     var value = this.value;
@@ -176,4 +207,14 @@ $('#columnTypeEdit').change(function(e) {
         $('#formulaEdit').hide();
     }
 });
+
+$('#setUnitEdit').click(function(){
+  var isCkecked = $('#setUnitEdit').is(':checked');
+  if (isCkecked) {
+    $('#proUnitEditdiv').show();
+  }else{
+    $('#proUnitEditdiv').hide();
+  }
+});
+
 </script>

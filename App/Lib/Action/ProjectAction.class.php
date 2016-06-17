@@ -158,20 +158,29 @@ class ProjectAction extends Action {
         $type = $_POST['type'];
         $oldProColumn = $_POST['oldProColumn'];
         $oldProTitle = $_POST['oldProTitle'];
-        $oldFormula = $_POST['oldFormula'];
+
         $oldData = array(
             "dept_id" => $proid,
             "cname" => $oldProColumn,
             "ctitle" => $oldProTitle,
-            "type" => $type,
-            "formula" => $oldFormula
+            "type" => $type
         );
-
+        
         $oldrc = $m_r_c -> where($oldData) -> find();
 
         $newProColumn = $_POST['newProColumn'];
         $newProTitle = $_POST['newProTitle'];
-        $newFormula = $_POST['newFormula'];
+        $local = $_POST['localEdit'];
+        if($type == 1){
+            if($local == 1){
+                $newFormula = $_POST['proUnitEdit'].' { }';
+            }else{
+                $newFormula = '{ } '.$_POST['proUnitEdit'];
+            }
+        }else{
+            $newFormula = $_POST['newFormula'];
+        }
+
         $newData = array(
             "dept_id" => $proid,
             "cname" => $newProColumn,
@@ -179,7 +188,7 @@ class ProjectAction extends Action {
             "type" => $type,
             "formula" => $newFormula
         );
-
+        
         if($oldrc !== null){
             $ret = $m_r_c -> where($oldData) -> save($newData);
         }else{
