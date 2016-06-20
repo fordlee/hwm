@@ -93,14 +93,14 @@ class AccountAction extends Action {
                 "email" => $email
             );
             $m_u = M('user');
-            $ret = $m_u -> where($where) -> find();
-            if($ret !== null){
-                $this -> assign('userid',$id);
-                $this -> assign('userInfo',$ret);
-                $this -> display();
-            }else{
-                $this -> error('你不能够修改他人信息！');
-            }
+            $ret = $m_u -> where('id='.$id) -> find();
+            $isFind = $m_u -> where($where) -> find();
+            $isSelf = $isFind !== null ? true : false;
+            $this -> assign('isSelf',$isSelf);
+            $this -> assign('userid',$id);
+            $this -> assign('userInfo',$ret);
+            $this -> display();
+            
         }
     }
 

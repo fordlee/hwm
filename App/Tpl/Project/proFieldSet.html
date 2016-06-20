@@ -1,6 +1,6 @@
 <include file="Public:header" />
 <include file="Public:sidenav" />
-
+<link rel="stylesheet" href="__PUBLIC__/common/css/mask.css">
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -23,6 +23,9 @@
         <div class="box box-info">
           <div class="box-header with-border">
             <h3 class="box-title">设置项目报表字段</h3>
+            <div class="box-tools pull-right">
+              <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            </div>
           </div><!-- /.box-header -->
           
           <!-- form start -->
@@ -42,10 +45,14 @@
                 <label for="proColumn" class="col-lg-1 control-label" >字段名：</label>
                 <div class="col-lg-2">
                   <input type="text" name="proColumn" class="form-control" placeholder="英文名">
+                  <span style="color:green">(例如：income)</span>
                 </div>
+              </div>
+              <div class="form-group">
                 <label for="proTitle" class="col-lg-1 control-label" >字段标题：</label>
                 <div class="col-lg-2">
                   <input type="text" name="proTitle" class="form-control" placeholder="中文标题">
+                  <span style="color:green">(例如：收入)</span>
                 </div>
               </div>
               <div class="form-group" id="setUnitdiv">
@@ -59,6 +66,7 @@
                 <label for="proUnit" class="col-lg-1 control-label" >字段单位：</label>
                 <div class="col-lg-2">
                   <input type="text" name="proUnit" class="form-control" placeholder="可以为空">
+                  <span style="color:green">(例如：输入$,单选开头则为"$100";输入元,单选末尾则为"100元")</span>
                 </div>
                 <input type="radio" name="local" value="1" checked>开头
                 <input type="radio" name="local" value="2" >末尾
@@ -67,6 +75,7 @@
                 <label for="formula" class="col-lg-1 control-label" >公式：</label>
                 <div class="col-lg-2">
                   <input type="text" name="formula" class="form-control" >
+                  <span style="color:green">(例如：$ { income - outcome } 注意每输入一个字符后输入一个空格符)</span>
                 </div>
               </div>
               <div class="form-group">
@@ -83,29 +92,54 @@
         <div class="box box-info">
           <div class="box-header with-border">
             <h3 class="box-title">项目报表字段预览</h3>
-            <button id="pfeBtn" class="btn btn-success pull-right">修改</button>
+            <div class="box-tools pull-right">
+              <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            </div>
           </div><!-- /.box-header -->
           <div class="box-body">
-            <volist name="ret" id="vo">
-              <div style="display: inline-block;width: 400px;">
-                {$vo.ctitle}
-                <notempty name="vo.formula">
-                  [{$vo.cname}={$vo.formula}]
-                <else/>
-                  [{$vo.cname}]
-                </notempty>
-              </div>
-            </volist>
+            <table id="example2" class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th>中文名</th>
+                  <th>字段名</th>
+                  <th>类型</th>
+                  <th>公式/单位</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <volist name="ret" id="vo">
+                  <tr>
+                    <th>{$vo.ctitle}</th>
+                    <th>{$vo.cname}</th>
+                    <if condition="$vo.type eq 1">
+                      <th>手动</th>
+                    <elseif condition="$vo.type eq 2"/>
+                      <th>公式</th>
+                    </if>
+                    <th>{$vo.formula}</th>
+                    <th>
+                      <button class="btn btn-success" onclick="updateColumn('{$vo.id}','{$vo.cname}','{$vo.ctitle}','{$vo.type}','{$vo.formula}')">
+                        修改
+                      </button>
+                    </th>
+                  </tr>                  
+                </volist>
+              </tbody>
+            </table>
           </div>
 
-          <div id="pfeForm" style="display:none">
-            <!-- form start -->
+          <div id="dialog" class="dialog" style="display:none">
+            <div class="mask"></div>
+            <div class="body">
+            
             <form action="__URL__/proFieldEdit" method="post" class="form-horizontal">
               <div class="box-body">
+                <input type="hidden" id="columnId" name="id" value="">
                 <input type="hidden" name="proid" value="{$proid}">
                 <div class="form-group">
-                  <label for="type" class="col-lg-1 control-label">字段类型：</label>
-                  <div class="col-lg-2">
+                  <label for="type" class="col-sm-3 control-label">字段类型：</label>
+                  <div class="col-sm-3">
                     <select name="type" id="columnTypeEdit" class="form-control">
                       <option value="1">手动</option>
                       <option value="2">公式</option>
@@ -113,58 +147,51 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="proColumn" class="col-lg-1 control-label" >原字段名：</label>
-                  <div class="col-lg-2">
-                    <input type="text" name="oldProColumn" class="form-control" placeholder="英文名">
-                  </div>
-                  <label for="proColumn" class="col-lg-1 control-label" >新字段名：</label>
-                  <div class="col-lg-2">
-                    <input type="text" name="newProColumn" class="form-control" placeholder="英文名">
+                  <label for="proColumn" class="col-sm-3 control-label" >新字段名：</label>
+                  <div class="col-sm-5">
+                    <input type="text" name="newProColumn" id="newProColumn" class="form-control" placeholder="英文名">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="proTitle" class="col-lg-1 control-label" >原标题：</label>
-                  <div class="col-lg-2">
-                    <input type="text" name="oldProTitle" class="form-control" placeholder="中文标题">
-                  </div>
-                  <label for="proTitle" class="col-lg-1 control-label" >新标题：</label>
-                  <div class="col-lg-2">
-                    <input type="text" name="newProTitle" class="form-control" placeholder="中文标题">
+                  <label for="proTitle" class="col-sm-3 control-label" >新字段标题：</label>
+                  <div class="col-sm-5">
+                    <input type="text" name="newProTitle" id="newProTitle" class="form-control" placeholder="中文标题">
                   </div>
                 </div>
                 <div class="form-group">
-                  <div class="checkbox">
-                    <label class="col-lg-2 pull-rignt" style="padding-left:50px">
-                      <input type="checkbox" name="setUnitEdit" id="setUnitEdit"> 设置字段单位
+                  <div class="checkbox" id="setUnitEditdiv">
+                    <label class="col-sm-3 control-label">
+                      <input type="checkbox" name="setUnitEdit" id="setUnitEdit">设置字段单位
                     </label>
                   </div>
                 </div>
                 <div class="form-group" id="proUnitEditdiv" style="display:none">
-                  <label for="proUnit" class="col-lg-1 control-label" >字段单位：</label>
-                  <div class="col-lg-2">
-                    <input type="text" name="proUnitEdit" class="form-control" placeholder="可以为空">
+                  <label for="proUnit" class="col-sm-3 control-label" >字段单位：</label>
+                  <div class="col-sm-5">
+                    <input type="text" name="proUnitEdit" id="proUnitEdit" class="form-control" placeholder="可以为空">
                   </div>
                   <input type="radio" name="localEdit" value="1" checked>开头
                   <input type="radio" name="localEdit" value="2" >末尾
                 </div>
                 <div class="form-group" id="formulaEdit" style="display:none;">
-                  <label for="formula" class="col-lg-1 control-label" >原公式：</label>
-                  <div class="col-lg-2">
-                    <input type="text" name="oldFormula" class="form-control" >
-                  </div>
-                  <label for="formula" class="col-lg-1 control-label" >新公式：</label>
-                  <div class="col-lg-2">
-                    <input type="text" name="newFormula" class="form-control" >
+                  <label for="formula" class="col-sm-3 control-label" >新公式：</label>
+                  <div class="col-sm-5">
+                    <input type="text" name="newFormula" id="newFormula" class="form-control" >
                   </div>
                 </div>
                 <div class="form-group">
-                  <div class="col-lg-1">
+                  <div class="col-sm-3 control-label">
+                    <button class="btn btn-default pull-right" id="btnBack">返回</button>
+                  </div>
+                  <div class="col-sm-5 control-label">
                     <button type="submit" class="btn btn-success pull-right">保存</button>
                   </div>
                 </div>
 
               </div><!-- /.box-body -->
             </form>
+
+            </div>
           </div>
 
         </div>
@@ -175,15 +202,24 @@
 
 <include file="Public:footer" />
 <script type="text/javascript">
+$('.mask').click(function(e) {
+   $('#dialog').hide();
+});
+
+$('#btnBack').click(function(e){
+  $('#dialog').hide();
+  return false;
+});
+
 $('#columnType').change(function(e) {
-    var value = this.value;
-    if (value == 2) {
-        $('#setUnitdiv').hide();
-        $('#formuladiv').show();
-    } else {
-        $('#formuladiv').hide();
-        $('#setUnitdiv').show();
-    }
+  var value = this.value;
+  if (value == 2) {
+      $('#setUnitdiv').hide();
+      $('#formuladiv').show();
+  } else {
+      $('#formuladiv').hide();
+      $('#setUnitdiv').show();
+  }
 });
 
 $('#setUnit').click(function(){
@@ -195,15 +231,33 @@ $('#setUnit').click(function(){
   }
 });
 
-$('#pfeBtn').click(function(){
-  $('#pfeForm').toggle();
-});
+function updateColumn(id,cname,ctitle,type,formula){
+  $('#columnId').val(id);
+  $('#newProColumn').val(cname);
+  $('#newProTitle').val(ctitle);
+  if(type == 1){
+    $('#setUnitEdit').attr("checked",true);
+    $('#columnTypeEdit').val(1);
+    $('#setUnitEditdiv').show();
+    $('#proUnitEditdiv').show();
+    $('#formulaEdit').hide();
+  }else{
+    $('#columnTypeEdit').val(2);
+    $('#setUnitEditdiv').hide();
+    $('#proUnitEditdiv').hide();
+    $('#formulaEdit').show();
+    $('#newFormula').val(formula);
+  }
+  $('#dialog').show();
+}
 
 $('#columnTypeEdit').change(function(e) {
     var value = this.value;
     if (value == 2) {
+        $('#setUnitEditdiv').hide();
         $('#formulaEdit').show();
     } else {
+        $('#setUnitEditdiv').show();
         $('#formulaEdit').hide();
     }
 });

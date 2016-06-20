@@ -64,14 +64,24 @@
             <div class="form-group">
               <label for="email" class="col-sm-2 control-label">邮箱：</label>
               <div class="col-sm-8">
-                <input type="email" class="form-control" name="email" value="{$userInfo.email}">
+                <if condition="$isSelf eq true">
+                  <input type="email" class="form-control" name="email" value="{$userInfo.email}">
+                <else/>
+                  <input type="email" class="form-control" name="email" readonly value="{$userInfo.email}">
+                  <span style="color:red">(不可修改他人)</span>
+                </if>
               </div>
             </div>
 
             <div class="form-group">
               <label for="password" class="col-sm-2 control-label">密码：</label>
               <div class="col-sm-8">
-                <input type="input" class="form-control" name="password" value="{$userInfo.password}">
+                <if condition="$isSelf eq true">
+                  <input type="input" class="form-control" name="password" value="{$userInfo.password}">
+                <else/>
+                  <input type="password" class="form-control" name="password" readonly value="hehe!you can't see!">
+                  <span style="color:red">(不可修改他人)</span>
+                </if>
               </div>
             </div>
             

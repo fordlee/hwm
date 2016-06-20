@@ -18,8 +18,8 @@
     </div>
     
     <!-- sidebar menu: : style can be found in sidebar.less -->
-    <ul class="sidebar-menu">
-      <li class="treeview active">
+    <ul class="sidebar-menu" id="sidebar">
+      <li class="treeview">
         <a href="javascript:void(0)">
           <i class="fa fa-dashboard"></i> <span>部门/项目管理</span> <i class="fa fa-angle-left pull-right"></i>
         </a>
@@ -30,7 +30,7 @@
           <li><a href="{:U('Project/proList')}"><i class="fa fa-circle-o"></i>项目管理</a></li>
         </ul>
       </li>
-      <li class="treeview active">
+      <li class="treeview">
         <a href="javascript:void(0)">
           <i class="fa fa-files-o"></i>
           <span>数据管理</span>
@@ -40,7 +40,7 @@
           <li><a href="{:U('Report/dataReport')}"><i class="fa fa-circle-o"></i>数据报表</a></li>
         </ul>
       </li>
-      <li class="treeview active">
+      <li class="treeview">
         <a href="javascript:void(0)">
           <i class="fa fa-files-o"></i>
           <span>账户管理</span>
@@ -57,3 +57,16 @@
 <!-- /.sidebar -->
 </aside>
 <script src="__PUBLIC__/console/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+<script type="text/javascript">
+  var url = '<?php echo $_SERVER['PHP_SELF'];?>';
+  var urlArr = url.split("/");
+  url = urlArr[3];
+  $("#sidebar li").removeClass('active');
+  $("#sidebar li ul li a").each(function(e){
+    var href = $(this).attr('href');
+    var sideBarActive = href.indexOf(url);
+    if(sideBarActive !== -1){
+      $(this).parent().parent().parent().addClass('active');
+    }
+  });
+</script>

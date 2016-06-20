@@ -111,9 +111,9 @@ class ProjectAction extends Action {
 
     public function proFieldSet(){
         $m_r_c = M('report_column');
-        if(isset($_POST['proColumn']) 
-            && isset($_POST['proTitle'])
-            && isset($_POST['type'])){
+        if(isset($_POST['proColumn']) && !empty($_POST['proColumn']) 
+            && isset($_POST['proTitle']) && !empty($_POST['proTitle'])
+            && isset($_POST['type']) && !empty($_POST['type'])){
             $proid = $_POST['proid'];
             $proColumn = $_POST['proColumn'];
             $proTitle = $_POST['proTitle'];
@@ -143,30 +143,24 @@ class ProjectAction extends Action {
             }else{
                 $this -> error('添加失败！');
             }
-        }else{
+        }elseif(isset($_GET['id']) && !empty($_GET['id'])){
             $proid = $_GET['id'];
-            $ret = $m_r_c -> field('cname,ctitle,formula') -> where("dept_id=".$proid) -> select();
+            $ret = $m_r_c -> where("dept_id=".$proid) -> select();
             $this -> assign('ret',$ret);
             $this -> assign('proid',$proid);
             $this -> display();
+        }else{
+            $this -> error('添加失败！');
         }
     }
 
     public function proFieldEdit(){
         $m_r_c = M('report_column');
+        $id = $_POST['id'];
         $proid = $_POST['proid'];
         $type = $_POST['type'];
-        $oldProColumn = $_POST['oldProColumn'];
-        $oldProTitle = $_POST['oldProTitle'];
-
-        $oldData = array(
-            "dept_id" => $proid,
-            "cname" => $oldProColumn,
-            "ctitle" => $oldProTitle,
-            "type" => $type
-        );
         
-        $oldrc = $m_r_c -> where($oldData) -> find();
+        $oldrc = $m_r_c -> where('id='.$id) -> find();
 
         $newProColumn = $_POST['newProColumn'];
         $newProTitle = $_POST['newProTitle'];
@@ -182,7 +176,6 @@ class ProjectAction extends Action {
         }
 
         $newData = array(
-            "dept_id" => $proid,
             "cname" => $newProColumn,
             "ctitle" => $newProTitle,
             "type" => $type,
@@ -190,9 +183,9 @@ class ProjectAction extends Action {
         );
         
         if($oldrc !== null){
-            $ret = $m_r_c -> where($oldData) -> save($newData);
+            $ret = $m_r_c -> where('id='.$id) -> save($newData);
         }else{
-            $ret = true;
+            $ret = false;
         }
 
         if($ret !== false){

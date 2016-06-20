@@ -30,17 +30,19 @@
             <div class="form-group">
               <input type="hidden" name="proid" value="{$proid}" >
               <label for="dept" class="col-lg-2 control-label">部门：</label>
-              <div class="col-lg-2">
+              <div class="col-lg-6">
                 <select name="dept" disabled class="form-control">
                   <volist name="deptInfo" id="vo">
                     <if condition="$vo.pid eq 0">
-                    <option value="{$vo.id}">{$vo.dept_name}</option>
+                      <option value="{$vo.id}">{$vo.dept_name}</option>
                     </if>
                   </volist>
                 </select>
               </div>
+            </div>
+            <div class="form-group">
               <label for="pro" class="col-lg-2 control-label">项目：</label>
-              <div class="col-lg-2">
+              <div class="col-lg-6">
                 <select name="pro" disabled class="form-control">
                   <volist name="deptInfo" id="vo">
                     <if condition="$vo.pid neq 0">
@@ -55,7 +57,7 @@
 
             <div class="form-group">
               <label for="date" class="col-lg-2 control-label">日期：</label>
-              <div class="col-lg-2">
+              <div class="col-lg-4">
                 <input type="date" name="reportdate" class="form-control">
               </div>
             </div>
@@ -64,12 +66,12 @@
               <div class="form-group">
                   <if condition="$vo.type eq 1">
                     <label for="{$vo.cname}" class="col-lg-2 control-label">{$vo.ctitle}[{$vo.cname}]：</label>
-                    <div class="col-lg-2">
+                    <div class="col-lg-6">
                       <input type="text" name="{$vo.cname}" id="{$vo.cname}" onchange="storage('{$vo.cname}')" class="form-control">
                     </div>
                   <elseif condition="$vo.type eq 2" />
                     <label for="{$vo.name}" class="col-lg-2 control-label">{$vo.ctitle}[{$vo.formula}]：</label>
-                    <div class="col-lg-2">
+                    <div class="col-lg-4">
                       <input type="text" name="{$vo.cname}" id="{$vo.cname}" readonly class="form-control">
                     </div>
                     <div class="col-lg-2">
