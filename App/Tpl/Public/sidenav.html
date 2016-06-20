@@ -19,17 +19,17 @@
     
     <!-- sidebar menu: : style can be found in sidebar.less -->
     <ul class="sidebar-menu" id="sidebar">
+      <if condition="$_SESSION['level'] lt 2">
       <li class="treeview">
         <a href="javascript:void(0)">
           <i class="fa fa-dashboard"></i> <span>部门/项目管理</span> <i class="fa fa-angle-left pull-right"></i>
         </a>
         <ul class="treeview-menu sidetree">
-          <if condition="$_SESSION['level'] lt 2">
-            <li><a href="{:U('Department/deptList')}"><i class="fa fa-circle-o"></i>部门管理</a></li>
-          </if>
+          <li><a href="{:U('Department/deptList')}"><i class="fa fa-circle-o"></i>部门管理</a></li>
           <li><a href="{:U('Project/proList')}"><i class="fa fa-circle-o"></i>项目管理</a></li>
         </ul>
       </li>
+      </if>
       <li class="treeview">
         <a href="javascript:void(0)">
           <i class="fa fa-files-o"></i>

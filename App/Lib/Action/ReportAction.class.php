@@ -41,7 +41,7 @@ class ReportAction extends Action {
             $reportdate = $_POST['reportdate'];
             
             $data['dept_id'] = $proid;
-            $data['date'] = $reportdate;
+            $data['date'] = date('Y-m-d',strtotime($reportdate));
             $data['operator'] = $_SESSION['name'];
             $data['operator_time'] = date('Y-m-d H:i:s');
             $m_r = M('report');

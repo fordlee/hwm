@@ -1,6 +1,7 @@
 <include file="Public:header" />
 <include file="Public:sidenav" />
-
+<!-- daterange picker -->
+<link rel="stylesheet" href="__PUBLIC__/console/plugins/datepicker/datepicker3.css">
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -58,7 +59,13 @@
             <div class="form-group">
               <label for="date" class="col-lg-2 control-label">日期：</label>
               <div class="col-lg-4">
-                <input type="date" name="reportdate" class="form-control">
+                <div class="input-group">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="text" name="reportdate" class="form-control pull-right" id="reservation">
+                </div>
+            <!-- <input type="date" name="reportdate" class="form-control"> -->
               </div>
             </div>
 
@@ -99,7 +106,13 @@
 </div><!-- /.content-wrapper -->
 
 <include file="Public:footer" />
+<!-- date-range-picker -->
+<script src="__PUBLIC__/common/js/moment.min.js"></script>
+<script src="__PUBLIC__/console/plugins/datepicker/bootstrap-datepicker.js"></script>
 <script type="text/javascript">
+
+$('#reservation').datepicker();
+
 function storage(cname){
   var cvalue = $('#'+cname).val();
   sessionStorage.setItem(cname,cvalue);
