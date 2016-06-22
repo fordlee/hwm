@@ -38,10 +38,11 @@ class ReportAction extends Action {
     public function dataEntry(){
     	if(isset($_POST['reportdate']) && !empty($_POST['reportdate'])){
     		$proid = $_POST['proid'];
-            $reportdate = $_POST['reportdate'];
+            $date = $_POST['reportdate'];
+            $reportdate = date('Y-m-d',strtotime($date));
             
             $data['dept_id'] = $proid;
-            $data['date'] = date('Y-m-d',strtotime($reportdate));
+            $data['date'] = $reportdate;
             $data['operator'] = $_SESSION['name'];
             $data['operator_time'] = date('Y-m-d H:i:s');
             $m_r = M('report');
@@ -220,7 +221,7 @@ class ReportAction extends Action {
             $pros[$i]['proid'] = $proitems[$i]['id'];
             $pros[$i]['proname'] = $proitems[$i]['dept_name'];
         }
-        $proname = $pros[0]['proname'];
+        $proname = $m_d -> where('id='.$proid) -> getField('dept_name');
         $where = array(
             'dept_id' => $proid,
             'date' => array('between', array($dateRange['begin'], $dateRange['end']))
@@ -269,7 +270,7 @@ class ReportAction extends Action {
         }
         
         $columns = $m_r_c -> field('cname,ctitle') -> where(array('dept_id' => $proid)) -> select();
-        $this -> assign('prodatas',$item);//var_dump($item);die();
+        $this -> assign('prodatas',$item);
         $this -> assign('pros',$pros);
         $this -> assign('proid',$proid);
         $this -> assign('columns',$columns);
