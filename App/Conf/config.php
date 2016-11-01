@@ -15,7 +15,7 @@ return array(
 	
 	//数据库相关
 	'DB_PREFIX' => '',
-	'DB_DSN' => 'mysql://root:@localhost:3306/hwm',//数据库配置
+	'DB_DSN' => 'mysql://root:root@localhost:3306/hwm',//数据库配置
 	'DB_CHARSET'=>'utf8',
 	
 	//限制伪静态后缀
